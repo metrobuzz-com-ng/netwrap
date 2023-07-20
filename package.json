@@ -4,7 +4,9 @@
   "description": "A package wrapper for helping teams around the world deliver consistent results when building frontend applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with apis",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "ts-node scripts/prepublish.ts && npm run build",
+    "build": "tsc && npm publish"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,17 @@
   "bugs": {
     "url": "https://github.com/metrobuzz-com-ng/netwrap/issues"
   },
-  "homepage": "https://github.com/metrobuzz-com-ng/netwrap#readme"
+  "homepage": "https://github.com/metrobuzz-com-ng/netwrap#readme",
+  "dependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "git-status": "^1.0.10",
+    "shelljs": "^0.8.5",
+    "ts-node": "^10.9.1"
+  }
 }
