@@ -9,13 +9,8 @@ import { simulateDataCall } from "./simulateDataCall";
 export const useFunctionGenerator = <T extends DataCallerType>({
   name,
   dataCallerType,
-  requestData,
-  signal,
-  headers,
-  onUploadProgress,
   dataCaller,
   location = calledFunction(),
-  mockData = undefined,
   ...otherProps
 }: HookGenerator<T>) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -45,10 +40,10 @@ export const useFunctionGenerator = <T extends DataCallerType>({
             ...otherProps,
             method: otherProps.method || "get",
             url: otherProps.url || "",
-            data: requestData,
-            signal,
-            headers,
-            onUploadProgress,
+            data: otherProps.requestData,
+            signal: otherProps.signal,
+            headers: otherProps.headers,
+            onUploadProgress: otherProps.onUploadProgress,
           });
 
           data = response.data;
@@ -56,17 +51,20 @@ export const useFunctionGenerator = <T extends DataCallerType>({
           // fetch call
           const response = await fetch(otherProps.url || "", {
             method: otherProps.method || "get",
-            body: requestData,
-            signal: signal as AbortSignal,
-            headers: headers as HeadersInit,
+            body: otherProps.requestData,
+            signal: otherProps.signal as AbortSignal,
+            headers: otherProps.headers as HeadersInit,
           });
 
           data = await response.json();
         } else if (dataCallerType === "custom") {
           data = dataCaller && (await dataCaller());
         } else if (dataCallerType === "simulate") {
-          if (!mockData) throw new Error("No mock data provided");
-          data = await simulateDataCall(5000, mockData);
+          if (!otherProps.mockData) throw new Error("No mock data provided");
+          data = await simulateDataCall(
+            otherProps.dataDelay,
+            otherProps.mockData
+          );
         }
 
         if (!data) throw new Error("No data returned");
@@ -76,7 +74,13 @@ export const useFunctionGenerator = <T extends DataCallerType>({
           payload: data,
         });
       } catch (error) {
-        return errorHandler({ error, dataCallerType, location, mockData });
+        return errorHandler({
+          error,
+          dataCallerType,
+          location,
+          mockData:
+            dataCallerType === "simulate" ? otherProps.mockData : undefined,
+        });
       } finally {
         setIsLoading(false);
       }

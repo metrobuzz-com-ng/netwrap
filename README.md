@@ -75,6 +75,113 @@ requestData: Data to be sent in the request body for Axios and Fetch calls (obje
 8. dataCaller: The custom data caller function for "custom" data calls (function, optional).
 9. mockData: The mock data for simulated data calls (any, optional).
 
+Advisory for dataCaller Prop
+------------
+
+When using the dataCaller prop, please ensure that you define the function to return something. The dataCaller function must return a value as it is enforced for dataCallerType set to "custom." If the dataCaller function doesn't return anything, it may result in errors or unexpected behavior in your custom hook.
+
+For other dataCallerType options like "axios", "fetch", or "simulate", the dataCaller prop is not allowed, and you can use other appropriate parameters for data calling.
+
+```javascript
+
+import { useFunctionGenerator } from "netwrap";
+
+const MyCustomComponent = () => {
+  // Define parameters
+  const name = "myCustomHook";
+  const dataCallerType = "custom"; // Choose from "axios", "fetch", "custom", or "simulate"
+
+  // Define your dataCaller function
+  const dataCaller =  async () => {
+    // Your data calling logic here
+    // Must return something as it's enforced for "custom" dataCallerType
+  };
+
+  // Call the hook generator
+  const { functions, loaders } = useFunctionGenerator({
+    name,
+    dataCallerType,
+    dataCaller, // Pass your dataCaller function here
+    // Other optional parameters as needed
+  });
+
+  // Use the generated functions and loaders as needed
+  const handleGetData = async () => {
+    try {
+      const result = await functions.useMyCustomHook(); // The name of the returned hook is determined by the name passed in the function generator
+      console.log("Data:", result.payload);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  return (
+    <div>
+      {/* Your JSX code here */}
+      <button onClick={handleGetData}>Get Data</button>
+      {loaders.isLoading && <p>Loading...</p>}
+    </div>
+  );
+};
+
+
+```
+
+Advisory for `simulate` DataCallerType
+------------
+
+When using the `simulate` dataCallerType, you can simulate a data call without making an actual API request. This can be useful during development and testing to check how your application behaves with different data scenarios. However, it's important to note the following:
+
+1. **Providing Mock Data**: When using the `simulate` dataCallerType, you must provide mock data to be used for the simulation. The `mockData` parameter is required, and it should be of the appropriate data type that your custom hook expects.
+
+2. **Simulating Delay**: The hook generator will simulate a delay of 5000ms (5 seconds) by default using the `simulateDataCall` function. This delay allows you to observe loading states and asynchronous behavior in your application. You can modify the delay duration if needed by passing a different time in milliseconds as an argument `dataDelay` to the function generator.
+
+3. **Mock Data Structure**: Ensure that the structure of the provided mock data matches the expected data structure in your custom hook. Mismatched data structures may lead to errors or unexpected behavior in your application.
+
+Here's an example of how to use the `simulate` dataCallerType:
+
+```javascript
+const MyCustomHook = () => {
+  // Define parameters
+  const name = "myCustomHook";
+  const dataCallerType = "simulate"; // Use "simulate" for simulating data
+
+  // Define your mock data
+  const mockData = {
+    id: 1,
+    name: "John Doe",
+    email: "john@example.com",
+  };
+
+  // Call the hook generator with "simulate" dataCallerType and mock data
+  const { functions, loaders } = useFunctionGenerator({
+    name,
+    dataCallerType,
+    mockData, // Provide the mock data here
+    // Other optional parameters as needed
+  });
+
+  // Use the generated functions and loaders as needed
+  const handleGetData = async () => {
+    try {
+      const result = await functions.useMyCustomHook();
+      console.log("Data:", result.payload);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  return (
+    <div>
+      {/* Your JSX code here */}
+      <button onClick={handleGetData}>Get Simulated Data</button>
+      {loaders.isLoading && <p>Loading...</p>}
+    </div>
+  );
+};
+
+```
+
 Error Handling
 ------------
 
