@@ -43,7 +43,7 @@ function MyComponent() {
 
   const fetchData = async () => {
     try {
-      const result = await functions.useMyDataHook(); // Call the generated hook function
+      const result = await functions.takeAction(); // Call the generated hook function
       console.log("Data received:", result.payload);
     } catch (error) {
       console.error("Error fetching data:", error.message);
@@ -108,7 +108,7 @@ const MyCustomComponent = () => {
   // Use the generated functions and loaders as needed
   const handleGetData = async () => {
     try {
-      const result = await functions.useMyCustomHook(); // The name of the returned hook is determined by the name passed in the function generator
+      const result = await functions.takeAction(); // The name of the returned hook is determined by the name passed in the function generator
       console.log("Data:", result.payload);
     } catch (error) {
       console.error("Error:", error);
@@ -164,7 +164,7 @@ const MyCustomHook = () => {
   // Use the generated functions and loaders as needed
   const handleGetData = async () => {
     try {
-      const result = await functions.useMyCustomHook();
+      const result = await functions.takeAction();
       console.log("Data:", result.payload);
     } catch (error) {
       console.error("Error:", error);

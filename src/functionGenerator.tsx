@@ -101,7 +101,7 @@ export const useFunctionGenerator = <T extends DataCallerType>({
 
     return {
       functions: {
-        [functionName]: mainFunction,
+        takeAction: mainFunction,
       },
       loaders: {
         isLoading,
