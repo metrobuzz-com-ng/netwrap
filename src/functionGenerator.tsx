@@ -35,6 +35,13 @@ export const useFunctionGenerator = <T extends DataCallerType>({
 
         if (dataCallerType === "axios") {
           // axios call
+
+          if (!otherProps.method || !otherProps.url) {
+            throw new Error(
+              'For "axios" dataCallerType, "method" and "url" are required properties.'
+            );
+          }
+
           const response = await axios.request({
             ...otherProps,
             method: otherProps.method || "get",
