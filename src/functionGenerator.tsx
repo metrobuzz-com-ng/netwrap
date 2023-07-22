@@ -41,7 +41,7 @@ export const useFunctionGenerator = <T extends DataCallerType>({
           );
         }
 
-        const response = await axios.request({
+        const response = await axios({
           ...otherProps,
           method: otherProps.method || "get",
           url: otherProps.url || "",
