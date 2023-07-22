@@ -6,7 +6,7 @@ import {
   HookGenerator,
   simulateDataCall,
   successHandler,
-} from "../src";
+} from "..";
 
 // Define a mock implementation for the successHandler and errorHandler functions
 jest.mock("./successHandler", () => ({

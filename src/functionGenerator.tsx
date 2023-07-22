@@ -1,5 +1,5 @@
+import React, { useState } from "react";
 import axios from "axios";
-import { useState } from "react";
 import { successHandler } from "./successHandler";
 import { errorHandler } from "./errorHandler";
 import { DataCallerType, HookGenerator } from "./types";
@@ -27,87 +27,84 @@ export const useFunctionGenerator = <T extends DataCallerType>({
 
   const functionName = `use${toPascalCase(name)}`;
 
-  const functionHandler = () => {
-    const mainFunction = async () => {
-      setIsLoading(true);
-      try {
-        let data = undefined;
+  const mainFunction = async () => {
+    setIsLoading(true);
+    try {
+      let data = undefined;
 
-        if (dataCallerType === "axios") {
-          // axios call
+      if (dataCallerType === "axios") {
+        // axios call
 
-          if (!otherProps.method || !otherProps.url) {
-            throw new Error(
-              'For "axios" dataCallerType, "method" and "url" are required properties.'
-            );
-          }
-
-          const response = await axios.request({
-            ...otherProps,
-            method: otherProps.method || "get",
-            url: otherProps.url || "",
-            data: otherProps.requestData,
-            signal: otherProps.signal,
-            headers: otherProps.headers,
-            onUploadProgress: otherProps.onUploadProgress,
-          });
-
-          data = response.data;
-        } else if (dataCallerType === "fetch") {
-          // fetch call
-
-          if (!otherProps.method || !otherProps.url) {
-            throw new Error(
-              'For "fetch" dataCallerType, "method" and "url" are required properties.'
-            );
-          }
-
-          const response = await fetch(otherProps.url || "", {
-            method: otherProps.method || "get",
-            body: otherProps.requestData,
-            signal: otherProps.signal as AbortSignal,
-            headers: otherProps.headers as HeadersInit,
-          });
-
-          data = await response.json();
-        } else if (dataCallerType === "custom") {
-          data = otherProps.dataCaller && (await otherProps.dataCaller());
-        } else if (dataCallerType === "simulate") {
-          if (!otherProps.mockData) throw new Error("No mock data provided");
-          data = await simulateDataCall(
-            otherProps.dataDelay,
-            otherProps.mockData
+        if (!otherProps.method || !otherProps.url) {
+          throw new Error(
+            'For "axios" dataCallerType, "method" and "url" are required properties.'
           );
         }
 
-        if (!data) throw new Error("No data returned");
+        const response = await axios.request({
+          ...otherProps,
+          method: otherProps.method || "get",
+          url: otherProps.url || "",
+          data: otherProps.requestData,
+          signal: otherProps.signal,
+          headers: otherProps.headers,
+          onUploadProgress: otherProps.onUploadProgress,
+        });
 
-        return successHandler({
-          message: "Successfully gotten returned data",
-          payload: data,
+        data = response.data;
+      } else if (dataCallerType === "fetch") {
+        // fetch call
+
+        if (!otherProps.method || !otherProps.url) {
+          throw new Error(
+            'For "fetch" dataCallerType, "method" and "url" are required properties.'
+          );
+        }
+
+        const response = await fetch(otherProps.url || "", {
+          method: otherProps.method || "get",
+          body: otherProps.requestData,
+          signal: otherProps.signal as AbortSignal,
+          headers: otherProps.headers as HeadersInit,
         });
-      } catch (error) {
-        return errorHandler({
-          error,
-          dataCallerType,
-          location,
-          mockData:
-            dataCallerType === "simulate" ? otherProps.mockData : undefined,
-        });
-      } finally {
-        setIsLoading(false);
+
+        data = await response.json();
+      } else if (dataCallerType === "custom") {
+        data = otherProps.dataCaller && (await otherProps.dataCaller());
+      } else if (dataCallerType === "simulate") {
+        if (!otherProps.mockData) throw new Error("No mock data provided");
+        data = await simulateDataCall(
+          otherProps.dataDelay as number,
+          otherProps.mockData
+        );
       }
-    };
 
-    return {
-      functions: {
-        takeAction: mainFunction,
-      },
-      loaders: {
-        isLoading,
-      },
-    };
+      if (!data) throw new Error("No data returned");
+
+      return successHandler({
+        message: "Successfully gotten returned data",
+        payload: data,
+      });
+    } catch (error) {
+      return errorHandler({
+        error,
+        dataCallerType,
+        location,
+        mockData:
+          dataCallerType === "simulate" ? otherProps.mockData : undefined,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  return functionHandler();
+  return {
+    functions: {
+      takeAction: mainFunction,
+      [functionName]: mainFunction,
+    },
+    loaders: {
+      isLoading,
+    },
+  };
 };
