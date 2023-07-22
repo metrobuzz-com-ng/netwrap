@@ -1,8 +1,8 @@
 {
   "name": "netwrap",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A package wrapper for helping teams around the world deliver consistent results when building frontend applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with apis",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "ts-node scripts/prepublish.ts && npm run build",

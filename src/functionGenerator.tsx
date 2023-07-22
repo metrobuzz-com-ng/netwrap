@@ -55,6 +55,13 @@ export const useFunctionGenerator = <T extends DataCallerType>({
           data = response.data;
         } else if (dataCallerType === "fetch") {
           // fetch call
+
+          if (!otherProps.method || !otherProps.url) {
+            throw new Error(
+              'For "fetch" dataCallerType, "method" and "url" are required properties.'
+            );
+          }
+
           const response = await fetch(otherProps.url || "", {
             method: otherProps.method || "get",
             body: otherProps.requestData,
