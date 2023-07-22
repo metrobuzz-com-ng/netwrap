@@ -50,6 +50,7 @@ export type ErrorHandlerProps = {
   error: unknown;
   dataCallerType: DataCallerType;
   location: string;
+  mockData?: any;
 };
 
 export type ErrorHandler = (body: ErrorHandlerProps) => HandlerProps & {

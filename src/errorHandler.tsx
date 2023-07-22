@@ -5,6 +5,7 @@ export const errorHandler: ErrorHandler = ({
   error,
   dataCallerType,
   location = "An error occurred in the errorHandler function",
+  mockData,
 }) => {
   log({ error, dataCallerType, location });
 
@@ -17,7 +18,7 @@ export const errorHandler: ErrorHandler = ({
 
     return {
       message: "Not an error instance",
-      payload: error,
+      payload: { mockData, error },
       status: false,
     };
   }
@@ -36,8 +37,8 @@ export const errorHandler: ErrorHandler = ({
     log({ error, dataCallerType, location });
 
     return {
-      message: axiosStyleError.response.data.message,
-      payload: axiosStyleError.response.data.payload,
+      message: "Unable to fetch data",
+      payload: { mockData, error: axiosStyleError.response.data },
       status: false,
     };
   }
@@ -56,7 +57,7 @@ export const errorHandler: ErrorHandler = ({
 
     return {
       message: fetchStyleError.message,
-      payload: undefined,
+      payload: { mockData, error: undefined },
       status: false,
     };
   }
@@ -65,7 +66,7 @@ export const errorHandler: ErrorHandler = ({
 
   return {
     message: error_.message,
-    payload: undefined,
+    payload: mockData,
     status: false,
   };
 };

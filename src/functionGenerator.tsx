@@ -6,7 +6,7 @@ import { DataCallerType, HookGenerator } from "./types";
 import { calledFunction } from "./errorCallerFunction";
 import { simulateDataCall } from "./simulateDataCall";
 
-export const functionGenerator = <T extends DataCallerType>({
+export const useFunctionGenerator = <T extends DataCallerType>({
   name,
   dataCallerType,
   requestData,
@@ -65,6 +65,7 @@ export const functionGenerator = <T extends DataCallerType>({
         } else if (dataCallerType === "custom") {
           data = dataCaller && (await dataCaller());
         } else if (dataCallerType === "simulate") {
+          if (!mockData) throw new Error("No mock data provided");
           data = await simulateDataCall(5000, mockData);
         }
 
@@ -75,7 +76,7 @@ export const functionGenerator = <T extends DataCallerType>({
           payload: data,
         });
       } catch (error) {
-        return errorHandler({ error, dataCallerType, location });
+        return errorHandler({ error, dataCallerType, location, mockData });
       } finally {
         setIsLoading(false);
       }
