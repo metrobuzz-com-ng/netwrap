@@ -9,7 +9,6 @@ import { simulateDataCall } from "./simulateDataCall";
 export const useFunctionGenerator = <T extends DataCallerType>({
   name,
   dataCallerType,
-  dataCaller,
   location = calledFunction(),
   ...otherProps
 }: HookGenerator<T>) => {
@@ -58,7 +57,7 @@ export const useFunctionGenerator = <T extends DataCallerType>({
 
           data = await response.json();
         } else if (dataCallerType === "custom") {
-          data = dataCaller && (await dataCaller());
+          data = otherProps.dataCaller && (await otherProps.dataCaller());
         } else if (dataCallerType === "simulate") {
           if (!otherProps.mockData) throw new Error("No mock data provided");
           data = await simulateDataCall(

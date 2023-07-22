@@ -54,16 +54,15 @@ export type DataCallerType = "axios" | "fetch" | "custom" | "simulate";
 //       : {});
 
 // Enforce that dataCaller function returns something for custom dataCallerType
-type EnforceCustomDataCallerReturnType<T extends DataCallerType> =
-  T extends "custom"
-    ? {
-        dataCaller: () => any; // Modify the return type as per your requirement
-      }
-    : {
-        dataCaller?: never;
-      };
+type EnforceCustomDataCallerReturnType<T> = T extends "custom"
+  ? {
+      dataCaller: () => any; // Modify the return type as per your requirement
+    }
+  : {
+      dataCaller?: undefined;
+    };
 
-type EnforceFetchDataCallerType<T extends DataCallerType> = T extends "fetch"
+type EnforceFetchDataCallerType<T> = T extends "fetch"
   ? {
       method?: AxiosRequestConfig<any>["method"];
       url?: string;
@@ -79,7 +78,7 @@ type EnforceFetchDataCallerType<T extends DataCallerType> = T extends "fetch"
       requestData?: never;
     };
 
-type EnforceAxiosDataCallerType<T extends DataCallerType> = T extends "axios"
+type EnforceAxiosDataCallerType<T> = T extends "axios"
   ? {
       method: AxiosRequestConfig<any>["method"];
       url: string;
@@ -97,27 +96,25 @@ type EnforceAxiosDataCallerType<T extends DataCallerType> = T extends "axios"
       onUploadProgress?: never;
     };
 
-type EnforceSimulateDataCallerType<T extends DataCallerType> =
-  T extends "simulate"
-    ? {
-        mockData: any; // Modify the type as per your requirement
-        dataDelay: number; // Enforce dataDelay as a required number
-      }
-    : {
-        mockData?: never;
-        dataDelay?: never;
-      };
+type EnforceSimulateDataCallerType<T> = T extends "simulate"
+  ? {
+      mockData: any; // Modify the type as per your requirement
+      dataDelay: number; // Enforce dataDelay as a required number
+    }
+  : {
+      mockData?: never;
+      dataDelay?: never;
+    };
 
 // Final HookGenerator type with required properties and separate "simulate" properties
-export type HookGenerator<T extends DataCallerType> =
-  EnforceCustomDataCallerReturnType<T> &
-    EnforceFetchDataCallerType<T> &
-    EnforceAxiosDataCallerType<T> &
-    EnforceSimulateDataCallerType<T> & {
-      name: string;
-      dataCallerType: T;
-      location?: any;
-    };
+export type HookGenerator<T extends DataCallerType> = {
+  name: string;
+  dataCallerType: T;
+  location?: any;
+} & EnforceCustomDataCallerReturnType<T> &
+  EnforceFetchDataCallerType<T> &
+  EnforceAxiosDataCallerType<T> &
+  EnforceSimulateDataCallerType<T>;
 
 export type HandlerProps = {
   message: string;
