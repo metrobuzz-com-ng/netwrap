@@ -13,12 +13,12 @@ npm install netwrap
 Getting Started
 ---------------
 
-To create a custom hook using the utility, you need to import the `useHookGenerator` function from the package and define the necessary configurations for your data call. The following steps demonstrate how to use the utility to create a custom hook:
+To create a custom hook using the utility, you need to import the `useFunctionGenerator` function from the package and define the necessary configurations for your data call. The following steps demonstrate how to use the utility to create a custom hook:
 
 1. Import the necessary modules and functions:
 
 ```javascript
-import { functionGenerator, successHandler, errorHandler } from "netwrap";
+import { useFunctionGenerator, successHandler, errorHandler } from "netwrap";
 
 const hookConfig = {
   name: "myDataHook", // Specify a name for your hook
@@ -36,7 +36,7 @@ const hookConfig = {
   mockData: { id: 1, name: "John Doe", age: 30 }, // Specify the mock data for simulated data calls
 };
 
-const useMyDataHook = functionGenerator(hookConfig); // The name of your hook can be anything you want
+const useMyDataHook = useFunctionGenerator(hookConfig); // The name of your hook can be anything you want
 
 function MyComponent() {
   const { functions, loaders } = useMyDataHook();
