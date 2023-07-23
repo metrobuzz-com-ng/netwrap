@@ -27,7 +27,17 @@ export const useFunctionGenerator = <T extends DataCallerType>({
 
   const functionName = `use${toPascalCase(name)}`;
 
-  const mainFunction = async () => {
+  const mainFunction = async (requestData?: any) => {
+    const getData = () => {
+      if (requestData) return requestData;
+
+      if (otherProps.requestData) return otherProps.requestData;
+
+      if (otherProps.mockData) return otherProps.mockData;
+
+      return undefined;
+    };
+
     setIsLoading(true);
     try {
       let data = undefined;
@@ -45,7 +55,7 @@ export const useFunctionGenerator = <T extends DataCallerType>({
           ...otherProps,
           method: otherProps.method || "get",
           url: otherProps.url || "",
-          data: otherProps.requestData,
+          data: getData(),
           signal: otherProps.signal,
           headers: otherProps.headers,
           onUploadProgress: otherProps.onUploadProgress,
@@ -63,7 +73,7 @@ export const useFunctionGenerator = <T extends DataCallerType>({
 
         const response = await fetch(otherProps.url || "", {
           method: otherProps.method || "get",
-          body: otherProps.requestData,
+          body: getData(),
           signal: otherProps.signal as AbortSignal,
           headers: otherProps.headers as HeadersInit,
         });
@@ -75,7 +85,7 @@ export const useFunctionGenerator = <T extends DataCallerType>({
         if (!otherProps.mockData) throw new Error("No mock data provided");
         data = await simulateDataCall(
           otherProps.dataDelay as number,
-          otherProps.mockData
+          getData()
         );
       }
 
@@ -90,8 +100,7 @@ export const useFunctionGenerator = <T extends DataCallerType>({
         error,
         dataCallerType,
         location,
-        mockData:
-          dataCallerType === "simulate" ? otherProps.mockData : undefined,
+        mockData: dataCallerType === "simulate" ? getData() : undefined,
       });
     } finally {
       setIsLoading(false);
