@@ -1,5 +1,5 @@
-import { useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import axios, { AxiosRequestConfig } from "axios";
 import { successHandler } from "./successHandler";
 import { errorHandler } from "./errorHandler";
 import { DataCallerType, HookGenerator } from "./types";
@@ -51,18 +51,17 @@ export const useFunctionGenerator = <T extends DataCallerType>({
           );
         }
 
-        const response = await axios({
+        const url = otherProps.url || "";
+
+        const response = await axios.request({
           method: otherProps.method || "get",
-          url: otherProps.url || "",
+          url,
           data: getData(),
-          signal: otherProps.signal,
-          headers: otherProps.headers,
-          onUploadProgress: otherProps.onUploadProgress,
-          ...otherProps,
-          
+          signal: otherProps.signal as AxiosRequestConfig<any>["signal"],
+          headers: otherProps.headers as AxiosRequestConfig<any>["headers"],
         });
 
-        data = response.data;
+        data = response;
       } else if (dataCallerType === "fetch") {
         // fetch call
 
@@ -72,9 +71,11 @@ export const useFunctionGenerator = <T extends DataCallerType>({
           );
         }
 
+        const requestedData = getData();
+
         const response = await fetch(otherProps.url || "", {
           method: otherProps.method || "get",
-          body: getData(),
+          body: requestedData ? JSON.stringify(data) : undefined,
           signal: otherProps.signal as AbortSignal,
           headers: otherProps.headers as HeadersInit,
         });
