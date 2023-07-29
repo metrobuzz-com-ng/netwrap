@@ -1,8 +1,9 @@
 {
   "name": "netwrap",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A package wrapper for helping teams around the world deliver consistent results when building frontend applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with APIs.",
   "main": "dist/index.js",
+  "files": ["dist"],
   "scripts": {
     "test": "jest --config jest.config.js",
     "prepublish": "ts-node scripts/prepublish.ts && npm run build",
