@@ -1,6 +1,6 @@
 {
   "name": "netwrap",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "A package wrapper for helping teams around the world deliver consistent results when building frontend applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with APIs.",
   "main": "dist/index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/metrobuzz-com-ng/netwrap#readme",
   "dependencies": {
-    "axios": "^1.4.0"
+    "axios": "^0.19.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || <19.0.0",

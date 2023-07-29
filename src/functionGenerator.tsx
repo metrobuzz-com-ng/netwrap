@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { successHandler } from "./successHandler";
 import { errorHandler } from "./errorHandler";
@@ -52,13 +52,14 @@ export const useFunctionGenerator = <T extends DataCallerType>({
         }
 
         const response = await axios({
-          ...otherProps,
           method: otherProps.method || "get",
           url: otherProps.url || "",
           data: getData(),
           signal: otherProps.signal,
           headers: otherProps.headers,
           onUploadProgress: otherProps.onUploadProgress,
+          ...otherProps,
+          
         });
 
         data = response.data;
