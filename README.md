@@ -185,7 +185,130 @@ const MyCustomHook = () => {
 
 ```
 
+Advisory for `fetch` DataCallerType
+------------
 
+When using the `fetch` dataCallerType, you can simulate a data call/api request. However, it's important to note the following:
+
+1. **Providing Method**: When using the `fetch` dataCallerType, you must provide method to be used for the request options. The `method` parameter is required, and it should be of the appropriate method type that your endpoint expects.
+
+2. **Providing Url**: When using the `fetch` dataCallerType, you must provide url to be used for the request options. The `url` parameter is required, and it must be a string.
+
+3. **Providing Request Data**: When using the `fetch` dataCallerType, you can provide the requestData to be used for the request options. The `requestData` parameter is optional, and it should be of the appropriate data types that your endpoint expects.
+
+4. **Providing Signal**: When using the `fetch` dataCallerType, you can provide the signal to be used to abort the request options. The `signal` parameter is optional.
+
+5. **Providing Headers**: When using the `fetch` dataCallerType, you can provide the headers to be used for the request options. The `headers` parameter is optional, and it should be of the appropriate data types that your endpoint expects.
+
+```javascript
+import React from "react";
+import { useFunctionGenerator } from "netwrap";
+
+const RandomComponent = () => {
+  // Define the hook configuration
+  const hookConfig = {
+    name: "myFetchDataHook", // Specify a name for your hook
+    dataCallerType: "fetch", // Set the DataCallerType to "axios"
+    method: "get", // Specify the HTTP method (default: "get")
+    url: "https://api.example.com/data", // Specify the URL
+
+    /** Other optional props below can be included depending on your use case */
+    requestData: { key: "value" }, // Include data to be sent in the request body (optional)
+    signal: undefined, // Specify the AbortSignal object for canceling requests (optional)
+    headers: { "Content-Type": "application/json" }, // Include HTTP headers (optional)
+  };
+
+  // Call the hook generator with the hook configuration
+  const { functions, loaders } = useFunctionGenerator(hookConfig);
+
+  // Use the generated functions and loaders as needed
+  const handleGetData = async () => {
+    try {
+      const result = await functions.takeAction();
+      console.log("Data:", result.payload);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  return (
+    <div>
+      {/* Your JSX code here */}
+      <button onClick={handleGetData}>Get Simulated Data</button>
+      {loaders.isLoading && <p>Loading...</p>}
+    </div>
+  );
+};
+
+export default RandomComponent;
+
+```
+
+Advisory for `axios` DataCallerType
+------------
+
+When using the `axios` dataCallerType, you can simulate a data call/api request. However, it's important to note the following:
+
+1. **Providing Method**: When using the `axios` dataCallerType, you must provide method to be used for the request options. The `method` parameter is required, and it should be of the appropriate method type that your endpoint expects.
+
+2. **Providing Url**: When using the `axios` dataCallerType, you must provide url to be used for the request options. The `url` parameter is required, and it must be a string.
+
+3. **Providing Request Data**: When using the `axios` dataCallerType, you can provide the requestData to be used for the request options. The `requestData` parameter is optional, and it should be of the appropriate data types that your endpoint expects.
+
+4. **Providing Signal**: When using the `axios` dataCallerType, you can provide the signal to be used to abort the request options. The `signal` parameter is optional.
+
+5. **Providing Headers**: When using the `axios` dataCallerType, you can provide the headers to be used for the request options. The `headers` parameter is optional, and it should be of the appropriate data types that your endpoint expects.
+
+6. **Providing Upload Progress Function**: When using the `axios` dataCallerType, you can provide a function that takes in the upload progress event parameter returned from axios when initiating the api request. The `onUploadProgress` parameter is optional.
+
+Here's an example of its usage: 
+
+``` javascript
+import React from "react";
+import { useFunctionGenerator } from "netwrap";
+
+const RandomComponent = () => {
+  // Define the hook configuration
+  const hookConfig = {
+    name: "myFetchDataHook", // Specify a name for your hook
+    dataCallerType: "axios", // Set the DataCallerType to "axios"
+    method: "get", // Specify the HTTP method (default: "get")
+    url: "https://api.example.com/data", // Specify the URL
+
+    /** Other optional props below can be included depending on your use case */
+    requestData: { key: "value" }, // Include data to be sent in the request body (optional)
+    signal: undefined, // Specify the AbortSignal object for canceling requests (optional)
+    headers: { "Content-Type": "application/json" }, // Include HTTP headers (optional)
+    onUploadProgess: (e: ProgressEvent) => {
+      console.log("Upload Progress:", e.loaded);
+    }, // Include a function to handle upload progress (optional)
+  };
+
+  // Call the hook generator with the hook configuration
+  const { functions, loaders } = useFunctionGenerator(hookConfig);
+
+  // Use the generated functions and loaders as needed
+  const handleGetData = async () => {
+    try {
+      const result = await functions.takeAction();
+      console.log("Data:", result.payload);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  return (
+    <div>
+      {/* Your JSX code here */}
+      <button onClick={handleGetData}>Get Simulated Data</button>
+      {loaders.isLoading && <p>Loading...</p>}
+    </div>
+  );
+};
+
+export default RandomComponent;
+
+```
 
 Error Handling
 ------------
