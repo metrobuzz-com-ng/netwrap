@@ -2,4 +2,3 @@ node_modules
 scripts
 tsconfig.json
 dist
-__tests__
