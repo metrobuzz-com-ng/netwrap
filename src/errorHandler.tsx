@@ -1,4 +1,5 @@
 import { log } from "./console";
+import { responseHandler } from "./responseHandler";
 import { ErrorHandler } from "./types";
 
 export const errorHandler: ErrorHandler = ({
@@ -16,11 +17,11 @@ export const errorHandler: ErrorHandler = ({
   if (!error_ || !getErrorInstance()) {
     log({ error, dataCallerType, location });
 
-    return {
+    return responseHandler({
       message: "Not an error instance",
       payload: { mockData, error },
       status: false,
-    };
+    });
   }
 
   const axiosStyleError =
@@ -36,11 +37,11 @@ export const errorHandler: ErrorHandler = ({
   ) {
     log({ error, dataCallerType, location });
 
-    return {
+    return responseHandler({
       message: "Unable to fetch data",
       payload: { mockData, error: axiosStyleError.response.data },
       status: false,
-    };
+    });
   }
 
   const fetchStyleError =
@@ -55,18 +56,18 @@ export const errorHandler: ErrorHandler = ({
   ) {
     log({ error, dataCallerType, location });
 
-    return {
+    return responseHandler({
       message: fetchStyleError.message,
       payload: { mockData, error: undefined },
       status: false,
-    };
+    });
   }
 
   log({ error, dataCallerType, location });
 
-  return {
+  return responseHandler({
     message: error_.message,
     payload: mockData,
     status: false,
-  };
+  });
 };

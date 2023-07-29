@@ -63,11 +63,10 @@ export type HookGenerator<T extends DataCallerType> = {
 export type HandlerProps = {
   message: string;
   payload: any;
+  status?: boolean;
 };
 
-export type SuccessHandler = (
-  data: HandlerProps
-) => HandlerProps & { status: boolean };
+export type ResponseHandler = (data: HandlerProps) => HandlerProps;
 
 export type ErrorHandlerProps = {
   error: unknown;
@@ -76,6 +75,4 @@ export type ErrorHandlerProps = {
   mockData?: any;
 };
 
-export type ErrorHandler = (body: ErrorHandlerProps) => HandlerProps & {
-  status: boolean;
-};
+export type ErrorHandler = (body: ErrorHandlerProps) => HandlerProps;

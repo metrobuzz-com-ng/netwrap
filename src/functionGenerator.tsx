@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { successHandler } from "./successHandler";
+import { responseHandler } from "./responseHandler";
 import { errorHandler } from "./errorHandler";
 import { DataCallerType, HookGenerator } from "./types";
 import { calledFunction } from "./errorCallerFunction";
@@ -93,7 +93,7 @@ export const useFunctionGenerator = <T extends DataCallerType>({
 
       if (!data) throw new Error("No data returned");
 
-      return successHandler({
+      return responseHandler({
         message: "Successfully gotten returned data",
         payload: data,
       });
@@ -119,3 +119,5 @@ export const useFunctionGenerator = <T extends DataCallerType>({
     },
   };
 };
+
+export const functionGenerator = useFunctionGenerator;

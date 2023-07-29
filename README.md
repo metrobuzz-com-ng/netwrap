@@ -75,7 +75,9 @@ requestData: Data to be sent in the request body for Axios and Fetch calls (obje
 8. dataCaller: The custom data caller function for "custom" data calls (function, optional).
 9. mockData: The mock data for simulated data calls (any, optional).
 
-Advisory for dataCaller Prop
+The following sections provide more details about each of these configuration options.
+
+Advisory for `custom` DataCallerType
 ------------
 
 When using the dataCaller prop, please ensure that you define the function to return something. The dataCaller function must return a value as it is enforced for dataCallerType set to "custom." If the dataCaller function doesn't return anything, it may result in errors or unexpected behavior in your custom hook.
@@ -158,6 +160,7 @@ const MyCustomHook = () => {
     name,
     dataCallerType,
     mockData, // Provide the mock data here
+    dataDelay: 1000, // Simulate a delay of 1000ms (1 second)
     // Other optional parameters as needed
   });
 
