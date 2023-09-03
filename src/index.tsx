@@ -1,21 +1,31 @@
+export * from "./console";
 export * from "./errorCallerFunction";
 export * from "./responseHandler";
 export * from "./simulateDataCall";
 export * from "./types";
-export * from "./console";
 
-import { useFunctionGenerator, functionGenerator } from "./functionGenerator";
+import { functionGenerator, useFunctionGenerator } from "./functionGenerator";
 
 declare global {
-  var netwrap: {
-    useFunctionGenerator?: typeof useFunctionGenerator;
-    functionGenerator: typeof functionGenerator;
-  }; // Update global types
+  interface Window {
+    netwrap: {
+      useFunctionGenerator?: typeof useFunctionGenerator;
+      functionGenerator: typeof functionGenerator;
+    };
+  }
+
+  namespace NodeJS {
+    interface Global {
+      netwrap: {
+        useFunctionGenerator?: typeof useFunctionGenerator;
+        functionGenerator: typeof functionGenerator;
+      };
+    }
+  }
 }
 
-// For Nodejs modules
-if (typeof global.netwrap === "undefined") {
-  // Merge netwrap to the global object
+// For Node.js modules
+if (typeof global !== "undefined" && typeof global.netwrap === "undefined") {
   global.netwrap = {
     functionGenerator,
     useFunctionGenerator: undefined,
@@ -23,12 +33,11 @@ if (typeof global.netwrap === "undefined") {
 }
 
 // For Browser modules
-if (typeof window.netwrap === "undefined") {
-  // Merge netwrap to the window object
+if (typeof window !== "undefined" && typeof window.netwrap === "undefined") {
   window.netwrap = {
     useFunctionGenerator,
     functionGenerator,
   };
 }
 
-export { useFunctionGenerator, functionGenerator };
+export { functionGenerator, useFunctionGenerator };
