@@ -6,37 +6,19 @@ export * from "./types";
 
 import { functionGenerator, useFunctionGenerator } from "./functionGenerator";
 
-declare global {
-  interface Window {
-    netwrap: {
-      useFunctionGenerator?: typeof useFunctionGenerator;
-      functionGenerator: typeof functionGenerator;
-    };
-  }
-
-  namespace NodeJS {
-    interface Global {
-      netwrap: {
-        useFunctionGenerator?: typeof useFunctionGenerator;
-        functionGenerator: typeof functionGenerator;
-      };
-    }
-  }
-}
-
 // For Node.js modules
-if (typeof global !== "undefined" && typeof global.netwrap === "undefined") {
-  global.netwrap = {
-    functionGenerator,
+if (typeof global !== "undefined") {
+  (global as any).netwrap = {
+    functionGenerator: functionGenerator,
     useFunctionGenerator: undefined,
   };
 }
 
 // For Browser modules
 if (typeof window !== "undefined" && typeof window.netwrap === "undefined") {
-  window.netwrap = {
-    useFunctionGenerator,
-    functionGenerator,
+  (window as any).netwrap = {
+    useFunctionGenerator: useFunctionGenerator,
+    functionGenerator: functionGenerator,
   };
 }
 
