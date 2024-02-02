@@ -7,6 +7,7 @@ declare global {
       useFunctionGenerator?: typeof useFunctionGenerator;
     };
   }
+
   interface Window {
     netwrap: {
       useFunctionGenerator?: typeof useFunctionGenerator;

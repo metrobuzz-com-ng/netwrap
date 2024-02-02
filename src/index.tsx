@@ -5,6 +5,7 @@ export * from "./simulateDataCall";
 export * from "./types";
 
 import { functionGenerator, useFunctionGenerator } from "./functionGenerator";
+import { useFetcher } from "./fetcher";
 
 // For Node.js modules
 if (typeof global !== "undefined") {
@@ -22,4 +23,4 @@ if (typeof window !== "undefined" && typeof window.netwrap === "undefined") {
   };
 }
 
-export { functionGenerator, useFunctionGenerator };
+export { functionGenerator, useFunctionGenerator, useFetcher };
