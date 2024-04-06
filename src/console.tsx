@@ -1,4 +1,4 @@
-import chalk from "chalk";
+const chalk = require("chalk");
 
 export const log = (
   data: any,
@@ -20,5 +20,3 @@ export const useConsole = () => {
     log,
   };
 };
-
-log("Testing");

@@ -1,6 +1,6 @@
 {
   "name": "netwrap",
-  "version": "2.0.6",
+  "version": "2.0.8",
   "description": "A package wrapper for helping teams around the world deliver consistent results when building frontend applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with APIs.",
   "main": "dist/index.js",
   "files": [
