@@ -6,12 +6,13 @@ export const log = (
   isError: boolean = false
 ) => {
   const logger = console[isError ? "error" : "log"];
+  const coloredChalk = chalk[isError ? "red" : "green"];
 
   if (shouldLog === true) {
-    return logger(chalk.green("Log:", data));
+    return logger(coloredChalk("Log:", data));
   }
 
-  return logger(chalk.green("Log:", "Logging is disabled"));
+  return logger(coloredChalk("Log:", "Logging is disabled"));
 };
 
 export const useConsole = () => {
