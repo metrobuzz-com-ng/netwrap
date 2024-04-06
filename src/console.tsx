@@ -1,11 +1,17 @@
-export const log = (data: any, shouldLog?: boolean, hideLogs = false) => {
-  if (typeof shouldLog === "undefined" || shouldLog === true) {
-    return console.log(data);
+import chalk from "chalk";
+
+export const log = (
+  data: any,
+  shouldLog: boolean = true,
+  isError: boolean = false
+) => {
+  const logger = console[isError ? "error" : "log"];
+
+  if (shouldLog === true) {
+    return logger(chalk.green("Log:", data));
   }
 
-  if (shouldLog === false) {
-    !hideLogs && console.log("Logging is disabled");
-  }
+  return logger(chalk.green("Log:", "Logging is disabled"));
 };
 
 export const useConsole = () => {
@@ -13,3 +19,5 @@ export const useConsole = () => {
     log,
   };
 };
+
+log("Testing");
