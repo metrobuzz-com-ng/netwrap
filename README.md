@@ -36,13 +36,13 @@ Using this utility is meant to be very intuitive as all types, functions and pri
 
 1. `calledFunction` - This is a utility that helps identify what function name you just called it from.
 2. `isReactAvailable` - This will help identify if your project is a react project or not
-3. `logger` - This is a multipurpose logger that enables terminal logging for any and everything you want. Read more about how it works down [below](__#logger__).
+3. `logger` - This is a multipurpose logger that enables terminal logging for any and everything you want. Read more about how it works down [below](#logger).
 4. `responseHandler` - This is just something i like to use to maintain consistency in returned values.
-5. `simulateDataCall` - This helps simulate an ajax or http request that takes some time to complete. Read more about how it works down [below](__#simulate-data-call__).
+5. `simulateDataCall` - This helps simulate an ajax or http request that takes some time to complete. Read more about how it works down [below](#simulate-data-call).
 
 ## Exported Types
 
-This package has most of its types exposed via named exports but as always you can create your own types using the exported functions alongside typescript [Utility Types](__https://www.typescriptlang.org/docs/handbook/utility-types.html__)
+This package has most of its types exposed via named exports but as always you can create your own types using the exported functions alongside typescript [Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html)
 
 ## NodeJS Netwrapper
 
@@ -57,19 +57,19 @@ Then in your project, you can just do this
 ```javascript
 const { trigger, data, error, onLoadingChange } = fetcher({
   queryFn: async () => {
-    // This expects you to return a Promise with data__
+    // This expects you to return a Promise with data
   },
   onStartQuery: () => {
-    // This will fire before the query function executes__
+    // This will fire before the query function executes
   },
   onSuccess: (data) => {
-    // This will fire right after the query is successful__
+    // This will fire right after the query is successful
   },
   onError: (error) => {
-    // This will fire if there is any error at all in the query function__
+    // This will fire if there is any error at all in the query function
   },
   onFinal: () => {
-    // This will fire once the query function has finished execution__
+    // This will fire once the query function has finished execution
   },
 });
 ```
@@ -104,9 +104,9 @@ const data = await trigger();
 /** the returned data will then look like this - {status: boolean, message: string; payload: any} */
 const { status, message, payload } = await trigger();
 
-// status - Whether the request was successful,__
-// message - Description of what just happened__
-// payload - The returned payload if the request was successful__
+// status - Whether the request was successful
+// message - Description of what just happened
+// payload - The returned payload if the request was successful
 ```
 
 Great right? I think so too!
@@ -121,16 +121,16 @@ import {fetcher} from "netwrap"
 fetcher({
     queryFn: async () => {
         /**
-        This is where you can manipulate data before your request runs__
+        This is where you can manipulate data before your request runs
         */
 
         const url = "https://dummyjson.com/users";
 
-        // You can throw errors here that you want caught by the onError callback__
+        // You can throw errors here that you want caught by the onError callback
 
-        throw new Error() // Sends an error to the onError callback. This is optional__
+        throw new Error() // Sends an error to the onError callback. This is optional
 
-        return axios.get(url); // Notice there is no await preceding this axios call. This is intentional.__
+        return axios.get(url); // Notice there is no await preceding this axios call. This is intentional.
     },
     ...
 });
@@ -145,10 +145,10 @@ import {logger, fetcher} from "netwrap"
 fetcher({
     onStartQuery: () => {
         /**
-        This runs just before the query function triggers and offers an opportunity for you to manually manage your loading state__
+        This runs just before the query function triggers and offers an opportunity for you to manually manage your loading state
         */
 
-        // Any error here will not be caught by the onError callback. Instead it will propagate upwards__
+        // Any error here will not be caught by the onError callback. Instead it will propagate upwards
     },
     ...
 });
@@ -163,11 +163,11 @@ import {logger, fetcher} from "netwrap"
 fetcher({
     onSuccess: (data) => {
         /**
-        This is where you get the data from a successfully query function run__
+        This is where you get the data from a successfully query function run
         */
         logger(data)
 
-        // You can throw errors here that you want caught by the onError callback__
+        // You can throw errors here that you want caught by the onError callback
 
         throw new Error() // Sends an error to the onError callback. This is optional
     },
@@ -184,11 +184,11 @@ import {logger, fetcher} from "netwrap"
 fetcher({
     onError: (error) => {
         /**
-        This is where you get the error from a failed query function run__
+        This is where you get the error from a failed query function run
        */
         logger(error)
 
-        // Throwing an error here will cascade to the top enclosing function to be handled__
+        // Throwing an error here will cascade to the top enclosing function to be handled
     },
     ...
 });
@@ -196,7 +196,7 @@ fetcher({
 
 ## ReactJS Netwrapper
 
-So in order not to sound like a broken record, pretty much every [callback](__#callbacks__) for the NodeJS Netwrapper applies here also. The singular difference is this
+So in order not to sound like a broken record, pretty much every [callback](#callbacks) for the NodeJS Netwrapper applies here also. The singular difference is this
 
 #### Imports
 
@@ -211,7 +211,7 @@ const App = () => {
 .  const {
       trigger, isLoading, data, error
     } = useFetcher({
-       //same callbacks as nodejs netwrapper__
+       //same callbacks as nodejs netwrapper
     })
 }
 ```
@@ -220,7 +220,7 @@ const App = () => {
 
 On react, the loading state is set inside the query function and exposed for your usage. So when the function starts loading the state is set to true and when it is done loading, it is set to false.
 
-As far the utilities and the documentation for them, their documentation will be hosted on this site [Metrobuzz](__https://metrobuzz.com.ng__)
+As far the utilities and the documentation for them, their documentation will be hosted on this site [Metrobuzz](https://metrobuzz.com.ng)
 
 ## Utilities
 
@@ -277,8 +277,23 @@ Netwrap Log: Hello // Would be colored green
 
 ### Simulate Data Call
 
+This function allows you to simulate a data call to an external resource. It dummy loads using the passed in delay time and then returns the mock data provided.
+
+Here's how to use it
+
+```javascript
+import { simulateDataCall } from "netwrap";
+
+const data = simulateDataCall(2000, { test: "yes" });
+
+/** data = {
+      test: "yes"
+    }
+*/
+```
+
 ## Closing
 
 Happy coding! If you have any questions or feedback, please feel free to reach out to us. We're here to help!
 
-Created by [@tylerdgenius](__https://github.com/tylerdgenius__)
+Created by [@tylerdgenius](https://github.com/tylerdgenius)
