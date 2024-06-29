@@ -43,6 +43,7 @@ const fetcher = <
   const trigger = async (triggerData?: RequestType) => {
     emitter.emit("isLoading", true);
     utils.logger("Fetching...");
+    props?.onStartQuery?.();
 
     try {
       const data = await props.queryFn(triggerData);

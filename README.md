@@ -1,322 +1,229 @@
-Custom Netwrapper Utility
-============================
+# Custom Netwrapper Utility
 
-The Custom Netwrapper Utility is a powerful tool designed to simplify the process of creating custom React hooks for handling different types of data calls, including Axios and Fetch requests, custom data callers, and simulated data calls. This utility allows you to generate hooks with ease, providing consistent patterns and error handling, making your data fetching code cleaner and more organized.
+This package is essentially a network wrapper that helps developers around the world deliver consistent results when building frontend applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with APIs.## Table of Contents
 
-Installation
-------------
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+  - [Basic Utilities](#basic-utilities)
+  - [Exported Types](#exported-types)
+- [NodeJS Netwrapper](#nodejs-netwrapper)
+- [ReactJS Netwrapper](#reactjs-netwrapper)
+- [Callbacks](#callbacks)
+  - [`queryFn`](#queryfn)
+  - [`onStartQuery`](#onstartquery)
+  - [`onSuccess`](#onsuccess)
+  - [`onError`](#onerror)
+- [Utilities](#utilities)
+  - [`calledFunction`](#calledfunction)
+  - [`isReactAvailable`](#isreactavailable)
+  - [`logger`](#logger)
+  - [`responseHandler`](#responsehandler)
+  - [`simulateDataCall`](#simulatedatacall)
 
-To use the Custom Hook Generator Utility in your project, you need to install it first. You can do this by running the following command:
+## Installation
 
+To use the fetcher utility in your project, you need to install it first. You can do this by running the following command:
+
+```bash
 npm install netwrap
+```
 
-Getting Started
----------------
+## Getting Started
 
-To create a custom hook using the utility, you need to import the `useFunctionGenerator` function from the package and define the necessary configurations for your data call. The following steps demonstrate how to use the utility to create a custom hook:
+Using this utility is meant to be very intuitive as all types, functions and private utilities are exported out of the package, however, there are a few specifics that are worth mentioning.
 
-1. Import the necessary modules and functions:
+**Note:** You can use this package on either a pure NodeJS project (Any framework built with NodeJs) or a ReactJS Project (All React frameworks included)
+
+## Basic Utilities
+
+1. `calledFunction` - This is a utility that helps identify what function name you just called it from.
+2. `isReactAvailable` - This will help identify if your project is a react project or not
+3. `logger` - This is a multipurpose logger that enables terminal logging for any and everything you want. Read more about how it works down [below](#Logger).
+4. `responseHandler` - This is just something i like to use to maintain consistency in returned values.
+5. `simulateDataCall` - This helps simulate an ajax or http request that takes some time to complete. Read more about how it works down [below](#SimulateDataCall).
+
+## Exported Types
+
+This package has most of its types exposed via named exports but as always you can create your own types using the exported functions alongside typescript [Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html)
+
+## NodeJS Netwrapper
+
+For those aiming to use this package on a nodejs based application, here's the only function that you need to activate the netwrapper goodness. Here's how you use it:
 
 ```javascript
-import { useFunctionGenerator, successHandler, errorHandler } from "netwrap";
-
-const hookConfig = {
-  name: "myDataHook", // Specify a name for your hook
-  dataCallerType: "axios", // Choose the type of data call ("axios", "fetch", "custom", or "simulate")
-
-  /** All other props below are optional depending on the selected data caller type */
-
-  method: "get", // Specify the HTTP method (used for Axios and Fetch calls)
-  url: "https://api.example.com/data", // Specify the URL (used for Axios and Fetch calls)
-  requestData: { key: "value" }, // Specify any data to be sent in the request body (used for Axios and Fetch calls)
-  signal: undefined, // Specify the AbortSignal object for canceling requests (used for Fetch calls)
-  headers: { "Content-Type": "application/json" }, // Specify HTTP headers (used for Fetch calls)
-  onUploadProgress: undefined, // Specify the upload progress handler (used for Axios calls)
-  dataCaller: undefined, // Specify a custom data caller function (used for "custom" data calls). It is technically a function that allows you to define your own data caller. Just make sure that you return the data you want exported from your function
-  mockData: { id: 1, name: "John Doe", age: 30 }, // Specify the mock data for simulated data calls
-};
-
-const useMyDataHook = useFunctionGenerator(hookConfig); // The name of your hook can be anything you want
-
-function MyComponent() {
-  const { functions, loaders } = useMyDataHook();
-
-  const fetchData = async () => {
-    try {
-      const result = await functions.takeAction(); // Call the generated hook function
-      console.log("Data received:", result.payload);
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-    }
-  };
-
-  return (
-    <div>
-      {loaders.isLoading ? <p>Loading...</p> : <button onClick={fetchData}>Fetch Data</button>}
-    </div>
-  );
-}
-
+import { fetcher } from "netwrap";
 ```
 
-Configuration Options
-------------
+Then in your project, you can just do this
 
-The function generator utility supports various configuration options to suit different data call scenarios:
+```javascript
+const { trigger, data, error, onLoadingChange } = fetcher({
+  queryFn: async () => {
+    // This expects you to return a Promise with data
+  },
+  onStartQuery: () => {
+    // This will fire before the query function executes
+  },
+  onSuccess: (data) => {
+    // This will fire right after the query is successful
+  },
+  onError: (error) => {
+    // This will fire if there is any error at all in the query function
+  },
+  onFinal: () => {
+    // This will fire once the query function has finished execution
+  },
+});
+```
 
-1. name: The name of the custom hook to be generated (string).
-2. dataCallerType: The type of data call to be made ("axios", "fetch", "custom", or "simulate").
-3. method: The HTTP method for Axios and Fetch calls (string, optional).
-4. url: The URL for Axios and Fetch calls (string, optional).
-requestData: Data to be sent in the request body for Axios and Fetch calls (object, optional).
-5. signal: The AbortSignal object for canceling Fetch requests (AbortSignal, optional).
-6. headers: HTTP headers for Fetch calls (object, optional).
-7. onUploadProgress: The upload progress handler for Axios calls (function, optional).
-8. dataCaller: The custom data caller function for "custom" data calls (function, optional).
-9. mockData: The mock data for simulated data calls (any, optional).
+Now you might be wondering what `trigger, data, error, onLoadChange` do
 
-The following sections provide more details about each of these configuration options.
+Let me explain it this way
 
-Advisory for `custom` DataCallerType
-------------
+```javascript
+const { trigger, data, error, onLoadChange } = fetcher({
+   ...
+})
 
-When using the dataCaller prop, please ensure that you define the function to return something. The dataCaller function must return a value as it is enforced for dataCallerType set to "custom." If the dataCaller function doesn't return anything, it may result in errors or unexpected behavior in your custom hook.
+// trigger - This is an asynchronous function to trigger the query function to run
+// data - This will hold the returned successful data after the query function runs
+// error - This will hold any error encountered
+// onLoadChange - This callback will fire whenever the loading state on query function updates
+```
 
-For other dataCallerType options like "axios", "fetch", or "simulate", the dataCaller prop is not allowed, and you can use other appropriate parameters for data calling.
+But that's not all you should know
+
+Callbacks on the fetcher function like `onStartQuery`, `onSuccess`, `onError` and `onFinal` are optional. What this means is you don't neccessarily need to use them. Only [`queryFn`](#```queryFn```) is mandatory.
+
+So you can do
+
+```javascript
+const { trigger } = fetcher({
+  queryFn: async () => {},
+});
+
+const data = await trigger();
+/** the returned data will then look like this - {status: boolean, message: string; payload: any} **/
+const { status, message, payload } = await trigger();
+
+// status - Whether the request was successful,
+// message - Description of what just happened
+// payload - The returned payload if the request was successful
+```
+
+Great right? I think so too!
+
+## Callbacks
+
+### `queryFn`
+
+```javascript
+import {fetcher} from "netwrap"
+
+fetcher({
+    queryFn: async () => {
+        /**
+        This is where you can manipulate data before your request runs
+        **/
+
+        const url = "https://dummyjson.com/users";
+
+                // You can throw errors here that you want caught by the onError callback
+
+        throw new Error() // Sends an error to the onError callback. This is optional
+
+        return axios.get(url); // Notice there is no await preceding this axios call. This is intentional.
+    },
+    ...
+});
+```
+
+### `onStartQuery`
 
 ```javascript
 
-import { useFunctionGenerator } from "netwrap";
+import {logger, fetcher} from "netwrap"
 
-const MyCustomComponent = () => {
-  // Define parameters
-  const name = "myCustomHook";
-  const dataCallerType = "custom"; // Choose from "axios", "fetch", "custom", or "simulate"
+fetcher({
+    onStartQuery: () => {
+        /**
+        This runs just before the query function triggers and offers an opportunity for you to manually manage your loading state
+        **/
 
-  // Define your dataCaller function
-  const dataCaller =  async () => {
-    // Your data calling logic here
-    // Must return something as it's enforced for "custom" dataCallerType
-  };
-
-  // Call the hook generator
-  const { functions, loaders } = useFunctionGenerator({
-    name,
-    dataCallerType,
-    dataCaller, // Pass your dataCaller function here
-    // Other optional parameters as needed
-  });
-
-  // Use the generated functions and loaders as needed
-  const handleGetData = async () => {
-    try {
-      const result = await functions.takeAction(); // The name of the returned hook is determined by the name passed in the function generator
-      console.log("Data:", result.payload);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  return (
-    <div>
-      {/* Your JSX code here */}
-      <button onClick={handleGetData}>Get Data</button>
-      {loaders.isLoading && <p>Loading...</p>}
-    </div>
-  );
-};
-
-
+                // Any error here will not be caught by the onError callback. Instead it will propagate upwards
+    },
+    ...
+});
 ```
 
-Advisory for `simulate` DataCallerType
-------------
-
-When using the `simulate` dataCallerType, you can simulate a data call without making an actual API request. This can be useful during development and testing to check how your application behaves with different data scenarios. However, it's important to note the following:
-
-1. **Providing Mock Data**: When using the `simulate` dataCallerType, you must provide mock data to be used for the simulation. The `mockData` parameter is required, and it should be of the appropriate data type that your custom hook expects.
-
-2. **Simulating Delay**: The hook generator will simulate a delay of 5000ms (5 seconds) by default using the `simulateDataCall` function. This delay allows you to observe loading states and asynchronous behavior in your application. You can modify the delay duration if needed by passing a different time in milliseconds as an argument `dataDelay` to the function generator.
-
-3. **Mock Data Structure**: Ensure that the structure of the provided mock data matches the expected data structure in your custom hook. Mismatched data structures may lead to errors or unexpected behavior in your application.
-
-Here's an example of how to use the `simulate` dataCallerType:
+### `onSuccess`
 
 ```javascript
-const MyCustomHook = () => {
-  // Define parameters
-  const name = "myCustomHook";
-  const dataCallerType = "simulate"; // Use "simulate" for simulating data
 
-  // Define your mock data
-  const mockData = {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-  };
+import {logger, fetcher} from "netwrap"
 
-  // Call the hook generator with "simulate" dataCallerType and mock data
-  const { functions, loaders } = useFunctionGenerator({
-    name,
-    dataCallerType,
-    mockData, // Provide the mock data here
-    dataDelay: 1000, // Simulate a delay of 1000ms (1 second)
-    // Other optional parameters as needed
-  });
+fetcher({
+    onSuccess: (data) => {
+        /**
+        This is where you get the data from a successfully query function run
+        **/
+        logger(data)
 
-  // Use the generated functions and loaders as needed
-  const handleGetData = async () => {
-    try {
-      const result = await functions.takeAction();
-      console.log("Data:", result.payload);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+                // You can throw errors here that you want caught by the onError callback
 
-  return (
-    <div>
-      {/* Your JSX code here */}
-      <button onClick={handleGetData}>Get Simulated Data</button>
-      {loaders.isLoading && <p>Loading...</p>}
-    </div>
-  );
-};
-
+        throw new Error() // Sends an error to the onError callback. This is optional
+    },
+    ...
+});
 ```
 
-Advisory for `fetch` DataCallerType
-------------
-
-When using the `fetch` dataCallerType, you can simulate a data call/api request. However, it's important to note the following:
-
-1. **Providing Method**: When using the `fetch` dataCallerType, you must provide method to be used for the request options. The `method` parameter is required, and it should be of the appropriate method type that your endpoint expects.
-
-2. **Providing Url**: When using the `fetch` dataCallerType, you must provide url to be used for the request options. The `url` parameter is required, and it must be a string.
-
-3. **Providing Request Data**: When using the `fetch` dataCallerType, you can provide the requestData to be used for the request options. The `requestData` parameter is optional, and it should be of the appropriate data types that your endpoint expects.
-
-4. **Providing Signal**: When using the `fetch` dataCallerType, you can provide the signal to be used to abort the request options. The `signal` parameter is optional.
-
-5. **Providing Headers**: When using the `fetch` dataCallerType, you can provide the headers to be used for the request options. The `headers` parameter is optional, and it should be of the appropriate data types that your endpoint expects.
+### `onError`
 
 ```javascript
-import React from "react";
-import { useFunctionGenerator } from "netwrap";
 
-const RandomComponent = () => {
-  // Define the hook configuration
-  const hookConfig = {
-    name: "myFetchDataHook", // Specify a name for your hook
-    dataCallerType: "fetch", // Set the DataCallerType to "axios"
-    method: "get", // Specify the HTTP method (default: "get")
-    url: "https://api.example.com/data", // Specify the URL
+import {logger, fetcher} from "netwrap"
 
-    /** Other optional props below can be included depending on your use case */
-    requestData: { key: "value" }, // Include data to be sent in the request body (optional)
-    signal: undefined, // Specify the AbortSignal object for canceling requests (optional)
-    headers: { "Content-Type": "application/json" }, // Include HTTP headers (optional)
-  };
+fetcher({
+    onError: (error) => {
+        /**
+        This is where you get the error from a failed query function run
+        **/
+        logger(error)
 
-  // Call the hook generator with the hook configuration
-  const { functions, loaders } = useFunctionGenerator(hookConfig);
-
-  // Use the generated functions and loaders as needed
-  const handleGetData = async () => {
-    try {
-      const result = await functions.takeAction();
-      console.log("Data:", result.payload);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  return (
-    <div>
-      {/* Your JSX code here */}
-      <button onClick={handleGetData}>Get Simulated Data</button>
-      {loaders.isLoading && <p>Loading...</p>}
-    </div>
-  );
-};
-
-export default RandomComponent;
-
+        // Throwing an error here will cascade to the top enclosing function to be handled
+    },
+    ...
+});
 ```
 
-Advisory for `axios` DataCallerType
-------------
+## ReactJS Netwrapper
 
-When using the `axios` dataCallerType, you can simulate a data call/api request. However, it's important to note the following:
+So in order not to sound like a broken record, pretty much every callback for the NodeJS Netwrapper applies here also. The singular difference is this
 
-1. **Providing Method**: When using the `axios` dataCallerType, you must provide method to be used for the request options. The `method` parameter is required, and it should be of the appropriate method type that your endpoint expects.
+#### Imports
 
-2. **Providing Url**: When using the `axios` dataCallerType, you must provide url to be used for the request options. The `url` parameter is required, and it must be a string.
-
-3. **Providing Request Data**: When using the `axios` dataCallerType, you can provide the requestData to be used for the request options. The `requestData` parameter is optional, and it should be of the appropriate data types that your endpoint expects.
-
-4. **Providing Signal**: When using the `axios` dataCallerType, you can provide the signal to be used to abort the request options. The `signal` parameter is optional.
-
-5. **Providing Headers**: When using the `axios` dataCallerType, you can provide the headers to be used for the request options. The `headers` parameter is optional, and it should be of the appropriate data types that your endpoint expects.
-
-6. **Providing Upload Progress Function**: When using the `axios` dataCallerType, you can provide a function that takes in the upload progress event parameter returned from axios when initiating the api request. The `onUploadProgress` parameter is optional.
-
-Here's an example of its usage: 
-
-``` javascript
-import React from "react";
-import { useFunctionGenerator } from "netwrap";
-
-const RandomComponent = () => {
-  // Define the hook configuration
-  const hookConfig = {
-    name: "myFetchDataHook", // Specify a name for your hook
-    dataCallerType: "axios", // Set the DataCallerType to "axios"
-    method: "get", // Specify the HTTP method (default: "get")
-    url: "https://api.example.com/data", // Specify the URL
-
-    /** Other optional props below can be included depending on your use case */
-    requestData: { key: "value" }, // Include data to be sent in the request body (optional)
-    signal: undefined, // Specify the AbortSignal object for canceling requests (optional)
-    headers: { "Content-Type": "application/json" }, // Include HTTP headers (optional)
-    onUploadProgess: (e: ProgressEvent) => {
-      console.log("Upload Progress:", e.loaded);
-    }, // Include a function to handle upload progress (optional)
-  };
-
-  // Call the hook generator with the hook configuration
-  const { functions, loaders } = useFunctionGenerator(hookConfig);
-
-  // Use the generated functions and loaders as needed
-  const handleGetData = async () => {
-    try {
-      const result = await functions.takeAction();
-      console.log("Data:", result.payload);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  return (
-    <div>
-      {/* Your JSX code here */}
-      <button onClick={handleGetData}>Get Simulated Data</button>
-      {loaders.isLoading && <p>Loading...</p>}
-    </div>
-  );
-};
-
-export default RandomComponent;
-
+```javascript
+import { useFetcher } from "netwrap";
 ```
 
-Error Handling
-------------
+#### Usage
 
-The utility includes built-in error handling that provides useful error messages and locations in case of data retrieval failures. It integrates with your custom error handler function (e.g., errorHandler) to deliver detailed error reports.
+```javascript
+const App = () => {
+ .  const {
+      trigger, isLoading, data, error
+    } = useFetcher({
+       // same callbacks as nodejs netwrapper
+    })
+ }
+```
 
-With the Custom Function Generator Utility, you can easily create custom hooks/functions to handle various data calls without the need for redundant boilerplate code. This utility streamlines your data fetching process, making it more organized and efficient.
+### isLoading
+
+On react, the loading state is set inside the query function and exposed for your usage. So when the function starts loading the state is set to true and when it is done loading, it is set to false.
+
+As far the utilities and the documentation for them, their documentation will be hosted on this site **[Metrobuzz](https://metrobuzz.com.ng)**
 
 Happy coding! If you have any questions or feedback, please feel free to reach out to us. We're here to help!
 
-Created by [@tylerdgenius](https://github.com/tylerdgenius)
+Created by [@tylerdgenius](__https://github.com/tylerdgenius__)

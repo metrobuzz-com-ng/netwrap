@@ -1,3 +1,4 @@
+import { useFetcherProps } from "../types";
 import utils from "../utils";
 
 if (!utils.isReactAvailable()) {
@@ -9,13 +10,6 @@ if (!utils.isReactAvailable()) {
 }
 
 import { useState } from "react";
-
-type useFetcherProps<T, K, P> = {
-  onSuccess?: (data: K) => void;
-  onError?: (error: P) => void;
-  onFinal?: () => void;
-  queryFn: (requestData?: T) => Promise<K>;
-};
 
 const useFetcher = <
   RequestType = any,
@@ -32,10 +26,12 @@ const useFetcher = <
 
   const trigger = async (triggerData?: RequestType) => {
     setIsLoading(true);
+    props?.onStartQuery?.();
     try {
       const data = await props.queryFn(triggerData);
 
       props?.onSuccess?.(data as ResponsePayloadType);
+
       setData(data as ResponsePayloadType);
 
       return {
