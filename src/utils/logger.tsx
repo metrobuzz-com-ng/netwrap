@@ -1,10 +1,4 @@
-type Logger = (
-  data: any,
-  options?: {
-    shouldLog?: boolean;
-    isError?: boolean;
-  }
-) => void;
+import { Logger } from "../types";
 
 const logger: Logger = (data, options) => {
   let shouldLog = true;

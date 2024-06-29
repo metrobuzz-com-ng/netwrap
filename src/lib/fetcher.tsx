@@ -1,9 +1,5 @@
-type useFetcherProps<T, K, P> = {
-  onSuccess?: (data: K) => void;
-  onError?: (error: P) => void;
-  onFinal?: () => void;
-  queryFn: (requestData?: T) => Promise<K>;
-};
+import { useFetcherProps } from "../types";
+import utils from "../utils";
 
 const fetcher = <
   RequestType = any,
@@ -26,11 +22,10 @@ const fetcher = <
       props?.onSuccess?.(data as ResponsePayloadType);
       mainData = data as ResponsePayloadType;
 
-      return {
-        status: true,
+      return utils.responseHandler({
         message: "Successfully made request",
         payload: data,
-      };
+      });
     } catch (error: unknown) {
       props?.onError?.(error as ErrorResponseType);
       mainError = error;
