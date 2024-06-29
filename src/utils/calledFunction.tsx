@@ -1,4 +1,4 @@
-export const calledFunction = () => {
+const calledFunction = () => {
   const error = new Error();
   const stackTraceLines = error.stack?.split("\n");
 
@@ -10,3 +10,5 @@ export const calledFunction = () => {
     return "";
   }
 };
+
+export default calledFunction;

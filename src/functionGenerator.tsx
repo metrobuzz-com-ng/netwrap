@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { responseHandler } from "./responseHandler";
-import { errorHandler } from "./errorHandler";
 import { DataCallerType, HookGenerator } from "./types";
-import { calledFunction } from "./errorCallerFunction";
-import { simulateDataCall } from "./simulateDataCall";
+import utils from "./utils";
 
 export const useFunctionGenerator = <T extends DataCallerType>({
   name,
   dataCallerType,
-  location = calledFunction(),
+  location = utils.calledFunction(),
   ...otherProps
 }: HookGenerator<T>) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +82,7 @@ export const useFunctionGenerator = <T extends DataCallerType>({
         data = otherProps.dataCaller && (await otherProps.dataCaller());
       } else if (dataCallerType === "simulate") {
         if (!otherProps.mockData) throw new Error("No mock data provided");
-        data = await simulateDataCall(
+        data = await utils.simulateDataCall(
           otherProps.dataDelay as number,
           getData()
         );
@@ -93,12 +90,12 @@ export const useFunctionGenerator = <T extends DataCallerType>({
 
       if (!data) throw new Error("No data returned");
 
-      return responseHandler({
+      return utils.responseHandler({
         message: "Successfully gotten returned data",
         payload: data,
       });
     } catch (error) {
-      return errorHandler({
+      return utils.errorHandler({
         error,
         dataCallerType,
         location,

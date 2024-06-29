@@ -1,4 +1,4 @@
-export const simulateDataCall = (
+const simulateDataCall = (
   delayInMilliseconds: number,
   mockData: any
 ): Promise<any> => {
@@ -8,3 +8,5 @@ export const simulateDataCall = (
     }, delayInMilliseconds);
   });
 };
+
+export default simulateDataCall;

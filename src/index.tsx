@@ -1,7 +1,6 @@
-export * from "./console";
-export * from "./errorCallerFunction";
-export * from "./responseHandler";
-export * from "./simulateDataCall";
+export * from "./utils/calledFunction";
+export * from "./utils/responseHandler";
+export * from "./utils/simulateDataCall";
 export * from "./types";
 
 import { functionGenerator, useFunctionGenerator } from "./functionGenerator";

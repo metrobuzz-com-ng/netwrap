@@ -1,21 +1,21 @@
-import { log } from "./console";
-import { responseHandler } from "./responseHandler";
-import { ErrorHandler } from "./types";
+import responseHandler from "./responseHandler";
+import { ErrorHandler } from "../types";
+import logger from "./logger";
 
-export const errorHandler: ErrorHandler = ({
+const errorHandler: ErrorHandler = ({
   error,
   dataCallerType,
   location = "An error occurred in the errorHandler function",
   mockData,
 }) => {
-  log({ error, dataCallerType, location });
+  logger({ error, dataCallerType, location });
 
   const error_ = error as Error;
 
   const getErrorInstance = () => error_ instanceof Error;
 
   if (!error_ || !getErrorInstance()) {
-    log({ error, dataCallerType, location });
+    logger({ error, dataCallerType, location });
 
     return responseHandler({
       message: "Not an error instance",
@@ -35,7 +35,7 @@ export const errorHandler: ErrorHandler = ({
     axiosStyleError.response &&
     axiosStyleError.response.data
   ) {
-    log({ error, dataCallerType, location });
+    logger({ error, dataCallerType, location });
 
     return responseHandler({
       message: "Unable to fetch data",
@@ -54,7 +54,7 @@ export const errorHandler: ErrorHandler = ({
     fetchStyleError &&
     fetchStyleError.message
   ) {
-    log({ error, dataCallerType, location });
+    logger({ error, dataCallerType, location });
 
     return responseHandler({
       message: fetchStyleError.message,
@@ -63,7 +63,7 @@ export const errorHandler: ErrorHandler = ({
     });
   }
 
-  log({ error, dataCallerType, location });
+  logger({ error, dataCallerType, location });
 
   return responseHandler({
     message: error_.message,
@@ -71,3 +71,5 @@ export const errorHandler: ErrorHandler = ({
     status: false,
   });
 };
+
+export default errorHandler;
