@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 type useFetcherProps<T, K, P> = {
   onSuccess?: (data: K) => void;
   onError?: (error: P) => void;
@@ -7,26 +5,26 @@ type useFetcherProps<T, K, P> = {
   queryFn: (requestData?: T) => Promise<K>;
 };
 
-export const useFetcher = <
+const fetcher = <
   RequestType = any,
   ResponsePayloadType = any,
   ErrorResponseType = unknown
 >(
   props: useFetcherProps<RequestType, ResponsePayloadType, ErrorResponseType>
 ) => {
-  const [mainData, setData] = useState<ResponsePayloadType | null>(null);
+  let mainData: ResponsePayloadType | null = null;
 
-  const [mainError, setError] = useState<ErrorResponseType | unknown>(null);
+  let mainError: ErrorResponseType | unknown = null;
 
-  const [isLoading, setIsLoading] = useState(false);
+  let isLoading = false;
 
   const trigger = async (triggerData?: RequestType) => {
-    setIsLoading(true);
+    isLoading = true;
     try {
       const data = await props.queryFn(triggerData);
 
       props?.onSuccess?.(data as ResponsePayloadType);
-      setData(data as ResponsePayloadType);
+      mainData = data as ResponsePayloadType;
 
       return {
         status: true,
@@ -35,7 +33,7 @@ export const useFetcher = <
       };
     } catch (error: unknown) {
       props?.onError?.(error as ErrorResponseType);
-      setError(error);
+      mainError = error;
       return {
         status: false,
         message: "Unable to make request",
@@ -43,7 +41,7 @@ export const useFetcher = <
       };
     } finally {
       props?.onFinal?.();
-      setIsLoading(false);
+      isLoading = false;
     }
   };
 
@@ -54,3 +52,5 @@ export const useFetcher = <
     isLoading,
   };
 };
+
+export default fetcher;

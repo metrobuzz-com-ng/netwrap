@@ -1,25 +1,11 @@
-export * from "./utils/calledFunction";
-export * from "./utils/responseHandler";
-export * from "./utils/simulateDataCall";
+import hooks from "./hooks";
+import lib from "./lib";
+import utils from "./utils";
+
+export default {
+  ...utils,
+  ...lib,
+  ...hooks,
+};
+
 export * from "./types";
-
-import { functionGenerator, useFunctionGenerator } from "./functionGenerator";
-import { useFetcher } from "./fetcher";
-
-// For Node.js modules
-if (typeof global !== "undefined") {
-  (global as any).netwrap = {
-    functionGenerator: functionGenerator,
-    useFunctionGenerator: undefined,
-  };
-}
-
-// For Browser modules
-if (typeof window !== "undefined" && typeof window.netwrap === "undefined") {
-  (window as any).netwrap = {
-    useFunctionGenerator: useFunctionGenerator,
-    functionGenerator: functionGenerator,
-  };
-}
-
-export { functionGenerator, useFunctionGenerator, useFetcher };

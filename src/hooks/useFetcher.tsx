@@ -1,3 +1,13 @@
+import utils from "../utils";
+
+if (!utils.isReactAvailable()) {
+  utils.logger("useFetcher can only be used in React based projects", {
+    isError: true,
+  });
+
+  throw new Error();
+}
+
 import { useState } from "react";
 
 type useFetcherProps<T, K, P> = {

@@ -76,11 +76,3 @@ export type ErrorHandlerProps = {
 };
 
 export type ErrorHandler = (body: ErrorHandlerProps) => HandlerProps;
-
-export type Logger = (
-  data: any,
-  options?: {
-    shouldLog?: boolean;
-    isError?: boolean;
-  }
-) => void;

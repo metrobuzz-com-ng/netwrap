@@ -6,7 +6,7 @@ import simulateDataCall from "./simulateDataCall";
 import calledFunction from "./calledFunction";
 
 export default {
-  log: logger,
+  logger,
   isReactAvailable,
   errorHandler,
   responseHandler,
