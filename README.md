@@ -2,7 +2,7 @@
 
 This package is essentially a network wrapper that helps developers around the world deliver consistent results when building frontend applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with APIs.## Table of Contents
 
-- [Installation](___#installation___)
+- [Installation](#installation)
 - [Getting Started](__#getting-started__)
   - [Basic Utilities](__#basic-utilities__)
   - [Exported Types](__#exported-types__)
