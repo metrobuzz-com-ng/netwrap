@@ -1,6 +1,6 @@
 {
   "name": "netwrap",
-  "version": "2.0.8",
+  "version": "3.0.0",
   "description": "A package wrapper for helping teams around the world deliver consistent results when building frontend applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with APIs.",
   "main": "dist/index.js",
   "files": [
@@ -45,8 +45,5 @@
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "typescript": "^4.1.6"
-  },
-  "dependencies": {
-    "chalk": "^5.3.0"
   }
 }
