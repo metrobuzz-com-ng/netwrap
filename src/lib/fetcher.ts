@@ -37,18 +37,15 @@ const fetcher = <
   onLoadingChange: (listener: (isLoading: boolean) => void) => void;
 } => {
   let mainData: ResponsePayloadType | null = null;
-
   let mainError: ErrorResponseType | unknown = null;
-
   const emitter = new EventEmitter();
 
   const trigger = async (triggerData?: RequestType) => {
     emitter.emit("isLoading", true);
+    utils.logger("Fetching...");
 
     try {
-      utils.logger("Fetching...");
       const data = await props.queryFn(triggerData);
-
       props?.onSuccess?.(data as ResponsePayloadType);
       mainData = data as ResponsePayloadType;
 
@@ -76,6 +73,7 @@ const fetcher = <
     error: mainError,
     onLoadingChange: (listener: (isLoading: boolean) => void) => {
       emitter.on("isLoading", listener);
+      utils.logger("Registered isLoading listener");
     },
   };
 };
