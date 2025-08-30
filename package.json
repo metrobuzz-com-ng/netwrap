@@ -1,6 +1,6 @@
 {
   "name": "netwrap",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "A package wrapper for helping teams around the world deliver consistent results when building react applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with APIs.",
   "main": "dist/index.js",
   "files": [
@@ -29,8 +29,8 @@
   },
   "homepage": "https://github.com/metrobuzz-com-ng/netwrap#readme",
   "peerDependencies": {
-    "react": "*",
-    "react-dom": "*"
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.17.0",
