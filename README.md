@@ -1,299 +1,251 @@
-# Custom Netwrapper Utility
+# Netwrap
 
-This package is essentially a network wrapper that helps developers around the world deliver consistent results when building frontend applications that connect to backend services. This package inspiration came from working in teams where frontend users could not achieve consistent results when integrating with APIs.## Table of Contents
+A lightweight, flexible network wrapper for consistent API integration in both React and Node.js applications.
+
+[![npm version](https://img.shields.io/npm/v/netwrap.svg)](https://www.npmjs.com/package/netwrap)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+
+## Overview
+
+Netwrap helps development teams deliver consistent results when integrating frontend applications with backend services. Born from real-world challenges in team environments where frontend developers struggled to achieve consistent API integration patterns.
+
+## Table of Contents
 
 - [Installation](#installation)
-- [Getting Started](#getting-started)
-  - [Basic Utilities](#basic-utilities)
-  - [Exported Types](#exported-types)
-- [NodeJS Netwrapper](#nodejs-netwrapper)
-- [ReactJS Netwrapper](#reactjs-netwrapper)
-- [Callbacks](#callbacks)
-  - [`queryFn`](#queryfn)
-  - [`onStartQuery`](#onstartquery)
-  - [`onSuccess`](#onsuccess)
-  - [`onError`](#onerror)
-- [Utilities](#utilities)
-  - [`logger`](#logger)
-  - [`simulateDataCall`](#simulate-data-call)
-- [Closing](#closing)
+- [Key Features](#key-features)
+- [Usage](#usage)
+  - [In Node.js](#in-nodejs)
+  - [In React](#in-react)
+- [API Reference](#api-reference)
+  - [Core Functions](#core-functions)
+  - [Callbacks](#callbacks)
+  - [Utilities](#utilities)
+- [TypeScript Support](#typescript-support)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Installation
 
-To use the fetcher utility in your project, you need to install it first. You can do this by running the following command:
-
 ```bash
 npm install netwrap
+# or
+yarn add netwrap
 ```
 
-## Getting Started
+## Key Features
 
-Using this utility is meant to be very intuitive as all types, functions and private utilities are exported out of the package, however, there are a few specifics that are worth mentioning.
+- **Unified API:** Consistent pattern for making network requests across projects
+- **React Ready:** Built-in React hooks for easy integration
+- **Node.js Compatible:** Works in any Node.js environment
+- **TypeScript Support:** Fully typed API for better development experience
+- **Error Handling:** Robust error handling with customizable callbacks
+- **Loading States:** Simple loading state management, especially useful in React
+- **Developer Utilities:** Helpful logging and testing utilities
 
-**Note:** You can use this package on either a pure NodeJS project (Any framework built with NodeJs) or a ReactJS Project (All React frameworks included)
+## Usage
 
-## Basic Utilities
-
-1. `calledFunction` - This is a utility that helps identify what function name you just called it from.
-2. `isReactAvailable` - This will help identify if your project is a react project or not
-3. `logger` - This is a multipurpose logger that enables terminal logging for any and everything you want. Read more about how it works down [below](#logger).
-4. `responseHandler` - This is just something i like to use to maintain consistency in returned values.
-5. `simulateDataCall` - This helps simulate an ajax or http request that takes some time to complete. Read more about how it works down [below](#simulate-data-call).
-
-## Exported Types
-
-This package has most of its types exposed via named exports but as always you can create your own types using the exported functions alongside typescript [Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html)
-
-## NodeJS Netwrapper
-
-For those aiming to use this package on a nodejs based application, here's the only function that you need to activate the netwrapper goodness. Here's how you use it:
+### In Node.js
 
 ```javascript
 import { fetcher } from "netwrap";
-```
 
-Then in your project, you can just do this
-
-```javascript
 const { trigger, data, error, onLoadingChange } = fetcher({
   queryFn: async () => {
-    // This expects you to return a Promise with data
-  },
-  onStartQuery: () => {
-    // This will fire before the query function executes
+    const response = await fetch('https://api.example.com/data');
+    return response.json();
   },
   onSuccess: (data) => {
-    // This will fire right after the query is successful
+    console.log('Request successful:', data);
   },
   onError: (error) => {
-    // This will fire if there is any error at all in the query function
-  },
-  onFinal: () => {
-    // This will fire once the query function has finished execution
-  },
-});
-```
-
-Now you might be wondering what `trigger, data, error, onLoadChange` do
-
-Let me explain it this way
-
-```javascript
-const { trigger, data, error, onLoadChange } = fetcher({
-   ...
-})
-
-// trigger - This is an asynchronous function to trigger the query function to run
-// data - This will hold the returned successful data after the query function runs
-// error - This will hold any error encountered
-// onLoadChange - This callback will fire whenever the loading state on query function updates
-```
-
-But that's not all you should know
-
-Callbacks on the fetcher function like `onStartQuery`, `onSuccess`, `onError` and `onFinal` are optional. What this means is you don't neccessarily need to use them. Only [`queryFn`](__#queryfn__) is mandatory.
-
-So you can do
-
-```javascript
-const { trigger } = fetcher({
-  queryFn: async () => {},
+    console.error('Request failed:', error);
+  }
 });
 
-const data = await trigger();
-/** the returned data will then look like this - {status: boolean, message: string; payload: any} */
-const { status, message, payload } = await trigger();
-
-// status - Whether the request was successful
-// message - Description of what just happened
-// payload - The returned payload if the request was successful
+// Execute the request
+const result = await trigger();
+console.log(result); // { status: boolean, message: string, payload: any }
 ```
 
-Great right? I think so too!
-
-## Callbacks
-
-### `queryFn`
-
-```javascript
-import {fetcher} from "netwrap"
-
-fetcher({
-    queryFn: async () => {
-        /**
-        This is where you can manipulate data before your request runs
-        */
-
-        const url = "https://dummyjson.com/users";
-
-        // You can throw errors here that you want caught by the onError callback
-
-        throw new Error() // Sends an error to the onError callback. This is optional
-
-        return axios.get(url); // Notice there is no await preceding this axios call. This is intentional.
-    },
-    ...
-});
-```
-
-### `onStartQuery`
-
-```javascript
-
-import {logger, fetcher} from "netwrap"
-
-fetcher({
-    onStartQuery: () => {
-        /**
-        This runs just before the query function triggers and offers an opportunity for you to manually manage your loading state
-        */
-
-        // Any error here will not be caught by the onError callback. Instead it will propagate upwards
-    },
-    ...
-});
-```
-
-### `onSuccess`
-
-```javascript
-
-import {logger, fetcher} from "netwrap"
-
-fetcher({
-    onSuccess: (data) => {
-        /**
-        This is where you get the data from a successfully query function run
-        */
-        logger(data)
-
-        // You can throw errors here that you want caught by the onError callback
-
-        throw new Error() // Sends an error to the onError callback. This is optional
-    },
-    ...
-});
-```
-
-### `onError`
-
-```javascript
-
-import {logger, fetcher} from "netwrap"
-
-fetcher({
-    onError: (error) => {
-        /**
-        This is where you get the error from a failed query function run
-       */
-        logger(error)
-
-        // Throwing an error here will cascade to the top enclosing function to be handled
-    },
-    ...
-});
-```
-
-## ReactJS Netwrapper
-
-So in order not to sound like a broken record, pretty much every [callback](#callbacks) for the NodeJS Netwrapper applies here also. The singular difference is this
-
-#### Imports
+### In React
 
 ```javascript
 import { useFetcher } from "netwrap";
-```
 
-#### Usage
+function UserProfile({ userId }) {
+  const { trigger, data, error, isLoading } = useFetcher({
+    queryFn: async () => {
+      const response = await fetch(`https://api.example.com/users/${userId}`);
+      return response.json();
+    }
+  });
 
-```javascript
-const App = () => {
-.  const {
-      trigger, isLoading, data, error
-    } = useFetcher({
-       //same callbacks as nodejs netwrapper
-    })
+  // Load data on component mount
+  useEffect(() => {
+    trigger();
+  }, [userId]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading profile</div>;
+  
+  return (
+    <div>
+      {data && <h1>{data.name}</h1>}
+    </div>
+  );
 }
 ```
 
-### isLoading
+## API Reference
 
-On react, the loading state is set inside the query function and exposed for your usage. So when the function starts loading the state is set to true and when it is done loading, it is set to false.
+### Core Functions
 
-As far the utilities and the documentation for them, their documentation will be hosted on this site [Metrobuzz](https://metrobuzz.com.ng)
+#### `fetcher(options)`
 
-## Utilities
+Creates a network request handler for Node.js environments.
 
-### Logger
+**Returns:**
+- `trigger`: Function to execute the request
+- `data`: The response data (if successful)
+- `error`: Any error that occurred
+- `onLoadingChange`: Callback registration for loading state changes
 
-This utility helps beautify logs by using colors to determine what types of logs you are getting.
+#### `useFetcher(options)`
 
-#### How it works
+React hook version of the fetcher.
 
-```javascript
-import { logger } from "netwrap";
+**Returns:**
+- `trigger`: Function to execute the request
+- `data`: The response data (if successful)
+- `error`: Any error that occurred
+- `isLoading`: Boolean indicating if the request is in progress
 
-logger("Hello");
+### Callbacks
 
-// Works like console.log
-// Output
-Netwrap Log "Hello" // Would be colored green
-```
+Both `fetcher` and `useFetcher` accept these callback options:
 
-Does it have options? Ofcourse it does!
+- **`queryFn`**: (Required) The async function that performs the actual request
+- **`onStartQuery`**: Called before the request begins
+- **`onSuccess`**: Called when the request succeeds, receives the response data
+- **`onError`**: Called when an error occurs, receives the error object
+- **`onFinal`**: Called when the request completes (success or error)
 
-```javascript
-import { logger } from "netwrap";
+### Utilities
 
-logger("Hello", {
-  shouldLog: false,
-});
+#### `logger(message, options)`
 
-// Output
-Netwrap Log:  Logging is disabled // Would be colored gray
-```
-
-```javascript
-import { logger } from "netwrap";
-
-logger("Hello", {
-  isError: true,
-});
-
-// Output
-Netwrap Log: Hello // Would be colored red
-```
+Colorful console logging utility.
 
 ```javascript
 import { logger } from "netwrap";
 
-logger("Hello", {
-  shouldLog: true,
-});
+// Regular log (green)
+logger("Request completed");
 
-// Output
-Netwrap Log: Hello // Would be colored green
+// Error log (red)
+logger("Request failed", { isError: true });
+
+// Disable logging
+logger("Debug info", { shouldLog: false });
 ```
 
-### Simulate Data Call
+#### `simulateDataCall(delay, mockData)`
 
-This function allows you to simulate a data call to an external resource. It dummy loads using the passed in delay time and then returns the mock data provided.
-
-Here's how to use it
+Simulates an API call with a delay, useful for testing.
 
 ```javascript
 import { simulateDataCall } from "netwrap";
 
-const data = simulateDataCall(2000, { test: "yes" });
-
-/** data = {
-      test: "yes"
-    }
-*/
+// Simulates a 2-second API call
+const data = await simulateDataCall(2000, { user: "John Doe" });
 ```
 
-## Closing
+#### Other Utilities
 
-Happy coding! If you have any questions or feedback, please feel free to reach out to us. We're here to help!
+- **`calledFunction`**: Helps identify the calling function name
+- **`isReactAvailable`**: Checks if React is available in the environment
+- **`responseHandler`**: Standardizes response format
 
-Created by [@tylerdgenius](https://github.com/tylerdgenius)
+## TypeScript Support
+
+Netwrap is built with TypeScript and exports all necessary types for full type safety:
+
+```typescript
+import { useFetcher } from "netwrap";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+interface UserError {
+  code: string;
+  message: string;
+}
+
+const { trigger, data, error, isLoading } = useFetcher<void, User, UserError>({
+  queryFn: async () => {
+    // Type-safe implementation
+  }
+});
+```
+
+## Examples
+
+### Basic Data Fetching
+
+```javascript
+const { trigger } = fetcher({
+  queryFn: async () => {
+    return fetch('https://api.example.com/data').then(res => res.json());
+  }
+});
+
+const { status, message, payload } = await trigger();
+```
+
+### Request with Parameters
+
+```javascript
+const { trigger } = fetcher({
+  queryFn: async (id) => {
+    return fetch(`https://api.example.com/items/${id}`).then(res => res.json());
+  }
+});
+
+const result = await trigger(123); // Pass parameter to request
+```
+
+### Loading State Management in React
+
+```javascript
+function DataComponent() {
+  const { trigger, isLoading, data } = useFetcher({
+    queryFn: async () => {
+      return fetch('https://api.example.com/data').then(res => res.json());
+    }
+  });
+
+  useEffect(() => {
+    trigger();
+  }, []);
+
+  return (
+    <div>
+      {isLoading ? 'Loading...' : (
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      )}
+    </div>
+  );
+}
+```
+
+## Contributing
+
+We welcome contributions! Please feel free to submit a Pull Request.
+
+## License
+
+ISC © [@metrobuzz/tylerdgenius](https://github.com/tylerdgenius)
